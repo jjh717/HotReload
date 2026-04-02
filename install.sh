@@ -186,7 +186,26 @@ else
 fi
 
 # ──────────────────────────────────────────────
-# 3. Build Phase setup
+# 3. Compile & install swiftc wrapper
+# ──────────────────────────────────────────────
+echo ""
+log_info "Installing swiftc wrapper..."
+
+SWIFTC_WRAPPER_SRC="$SCRIPT_DIR/Scripts/swiftc_wrapper.swift"
+HOTRELOAD_TMP="/private/tmp/HotReload"
+
+mkdir -p "$HOTRELOAD_TMP"
+
+if swiftc -O "$SWIFTC_WRAPPER_SRC" -o "$HOTRELOAD_TMP/swiftc" 2>/dev/null; then
+    chmod +x "$HOTRELOAD_TMP/swiftc"
+    log_ok "swiftc wrapper installed at $HOTRELOAD_TMP/swiftc"
+else
+    log_error "Failed to compile swiftc wrapper."
+    log_info "Try manually: swiftc -O $SWIFTC_WRAPPER_SRC -o $HOTRELOAD_TMP/swiftc"
+fi
+
+# ──────────────────────────────────────────────
+# 4. Build Phase setup
 # ──────────────────────────────────────────────
 echo ""
 log_info "Build Phase setup..."
@@ -226,7 +245,7 @@ case "$PROJECT_TYPE" in
 esac
 
 # ──────────────────────────────────────────────
-# 4. AppDelegate instructions
+# 5. AppDelegate instructions
 # ──────────────────────────────────────────────
 echo ""
 log_info "Final step: Add the following to your AppDelegate:"
