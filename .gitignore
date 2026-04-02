@@ -13,5 +13,9 @@ DerivedData/
 .swiftpm/
 Package.resolved
 
+# Claude
+CLAUDE.md
+.claude/
+
 # HotReload runtime (generated at /tmp)
 /tmp/HotReload*/
