@@ -1,5 +1,9 @@
 import SwiftUI
 
+#if DEBUG && targetEnvironment(simulator)
+import HotReloadClient
+#endif
+
 // MARK: - SwiftUI Hot Reload Example
 //
 // How to test:
@@ -7,16 +11,20 @@ import SwiftUI
 //   2. Change the text, colors, or layout below
 //   3. Press Cmd+S
 //   4. The View body is replaced at runtime via @_dynamicReplacement
-//
-// No additional code is needed for SwiftUI. It works automatically.
 
 struct ExampleSwiftUIView: View {
+
+    #if DEBUG && targetEnvironment(simulator)
+    @ObservedObject var _hotReload = HotReloadObserver.shared
+    #endif
+
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "bolt.fill")
                 .font(.system(size: 60))
                 .foregroundColor(.orange)
 
+            // ✏️ Try changing this text and press Cmd+S
             Text("SwiftUI Hot Reload")
                 .font(.title)
                 .fontWeight(.bold)

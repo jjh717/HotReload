@@ -10,25 +10,8 @@ import UIKit
 
 class ExampleViewController: UIViewController {
 
-    private let titleLabel: UILabel = {
-        let label = UILabel()
-        label.text = "HotReload Example"
-        label.font = .systemFont(ofSize: 28, weight: .bold)
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-
-    private let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.text = "Edit this file and press Cmd+S.\nThe UI will update instantly."
-        label.font = .systemFont(ofSize: 16)
-        label.textColor = .secondaryLabel
-        label.textAlignment = .center
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
+    private let titleLabel = UILabel()
+    private let descriptionLabel = UILabel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,9 +28,22 @@ class ExampleViewController: UIViewController {
         #endif
     }
 
-    private func makeUI() {
-        // Try changing this color and press Cmd+S
+    @objc private func makeUI() {
+        // ✏️ Try changing this color and press Cmd+S
         view.backgroundColor = .systemBackground
+
+        // ✏️ Try changing this text and press Cmd+S
+        titleLabel.text = "HotReload Example"
+        titleLabel.font = .systemFont(ofSize: 28, weight: .bold)
+        titleLabel.textAlignment = .center
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        descriptionLabel.text = "Edit this file and press Cmd+S.\nThe UI will update instantly."
+        descriptionLabel.font = .systemFont(ofSize: 16)
+        descriptionLabel.textColor = .secondaryLabel
+        descriptionLabel.textAlignment = .center
+        descriptionLabel.numberOfLines = 0
+        descriptionLabel.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(titleLabel)
         view.addSubview(descriptionLabel)
@@ -64,8 +60,10 @@ class ExampleViewController: UIViewController {
 
     #if DEBUG && targetEnvironment(simulator)
     @objc func injected() {
+        print("[HotReload] injected() called on ExampleViewController")
         view.subviews.forEach { $0.removeFromSuperview() }
         makeUI()
+        print("[HotReload] makeUI() done, titleLabel.text = \(titleLabel.text ?? "nil")")
     }
     #endif
 }

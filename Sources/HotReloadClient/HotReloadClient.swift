@@ -11,6 +11,7 @@
 
 #if DEBUG && targetEnvironment(simulator)
 import Foundation
+import UIKit
 import ObjectiveC
 import MachO
 
@@ -109,12 +110,20 @@ public enum HotReloadClient {
         loadedCount += 1
         print("[HotReload] dylib loaded (#\(loadedCount))")
 
-        replaceObjCMethods()
+        let isSwiftUIReplacement = path.contains("replacement_")
+
+        if !isSwiftUIReplacement {
+            replaceObjCMethods()
+        }
 
         NotificationCenter.default.post(
             name: .hotReloadInjected,
             object: nil
         )
+
+        if isSwiftUIReplacement {
+            HotReloadObserver.shared.notify()
+        }
     }
 
     // MARK: - ObjC Method Replacement (UIKit)
@@ -199,6 +208,25 @@ public enum HotReloadClient {
 
 public extension Notification.Name {
     static let hotReloadInjected = Notification.Name("HotReloadInjected")
+}
+
+// MARK: - SwiftUI Hot Reload Observer
+
+import SwiftUI
+import Combine
+
+/// Add `@ObservedObject var _hotReload = HotReloadObserver.shared` to your SwiftUI View.
+/// When hot reload triggers, this forces SwiftUI to re-evaluate body.
+public final class HotReloadObserver: ObservableObject {
+    public static let shared = HotReloadObserver()
+    @Published public var version: Int = 0
+
+    fileprivate func notify() {
+        DispatchQueue.main.async {
+            self.version += 1
+            print("[HotReload] SwiftUI observer version: \(self.version)")
+        }
+    }
 }
 
 #endif

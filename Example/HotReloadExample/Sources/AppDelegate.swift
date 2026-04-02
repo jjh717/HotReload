@@ -1,4 +1,5 @@
 import UIKit
+import SwiftUI
 
 #if DEBUG && targetEnvironment(simulator)
 import HotReloadClient
@@ -18,8 +19,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         HotReloadClient.start()
         #endif
 
+        let uikitVC = ExampleViewController()
+        uikitVC.tabBarItem = UITabBarItem(title: "UIKit", image: UIImage(systemName: "hammer"), tag: 0)
+
+        let swiftUIVC = UIHostingController(rootView: ExampleSwiftUIView())
+        swiftUIVC.tabBarItem = UITabBarItem(title: "SwiftUI", image: UIImage(systemName: "swift"), tag: 1)
+
+        let tabBar = UITabBarController()
+        tabBar.viewControllers = [
+            UINavigationController(rootViewController: uikitVC),
+            UINavigationController(rootViewController: swiftUIVC),
+        ]
+
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = UINavigationController(rootViewController: ExampleViewController())
+        window?.rootViewController = tabBar
         window?.makeKeyAndVisible()
 
         return true

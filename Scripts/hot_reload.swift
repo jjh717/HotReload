@@ -462,11 +462,13 @@ func recompileUIKit(sourceFile: String, moduleName: String) {
         }
 
         if arg.hasSuffix(".swift") && !arg.hasPrefix("-") && !arg.hasPrefix("@") { continue }
+        if arg.hasPrefix("@") && arg.hasSuffix(".SwiftFileList") { continue }
         if arg == "-o" { skipNext = true; continue }
 
         args.append(arg)
     }
 
+    args.append(sourceFile)
     args.append("-emit-library")
     args.append("-o")
     args.append(dylibPath)
