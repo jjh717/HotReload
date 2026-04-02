@@ -32,6 +32,7 @@ Target dependency:
 
 The script automatically:
 - Detects project type (Tuist / Xcode / SPM)
+- Compiles & installs swiftc wrapper (`/private/tmp/HotReload/swiftc`)
 - Adds Debug-only xcconfig settings
 - Installs Build Phase script
 
@@ -89,11 +90,29 @@ override func injected() {
 #endif
 ```
 
+> **Note**: Methods changed by hot reload must be visible to the ObjC runtime. `private` methods without `@objc` use Swift static dispatch and won't be replaced. Add `@objc` to private methods you want to hot reload, or make them non-private.
+
 ### SwiftUI
 
-**Works automatically. No code changes needed.**
+Add one line to your SwiftUI View to enable hot reload:
 
-Edit any code inside `var body: some View { ... }` and press Cmd+S. A `@_dynamicReplacement` wrapper is auto-generated and the body is replaced at runtime.
+```swift
+#if DEBUG && targetEnvironment(simulator)
+import HotReloadClient
+#endif
+
+struct MyView: View {
+    #if DEBUG && targetEnvironment(simulator)
+    @ObservedObject var _hotReload = HotReloadObserver.shared
+    #endif
+
+    var body: some View {
+        // Edit and press Cmd+S
+    }
+}
+```
+
+`@_dynamicReplacement` replaces the body at runtime, and `HotReloadObserver` triggers SwiftUI to re-evaluate it.
 
 ## How It Works
 
